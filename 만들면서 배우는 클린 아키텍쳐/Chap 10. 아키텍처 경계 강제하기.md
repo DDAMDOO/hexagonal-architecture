@@ -14,30 +14,32 @@
 
 경계를 강제하기 위해 자바에서 제공하는 가장 기본적인 도구이다.
 
-주로 public, protected, private을 많이 사용하지만 package-private를 이용하면 자바 패키지를 통해 클래스들을 **응집적인 모듈**로 만들어 주기에 중요하다. 이렇게 하면 의존성이 잘못된 방향을 가리켜서 의존성 규칙을 위반할 위험이 줄어든다.> buckpal
+주로 public, protected, private을 많이 사용하지만 package-private를 이용하면 자바 패키지를 통해 클래스들을 **응집적인 모듈**로 만들어 주기에 중요하다. 이렇게 하면 의존성이 잘못된 방향을 가리켜서 의존성 규칙을 위반할 위험이 줄어든다.
+
+> buckpal
 >
->* account
+> * account
 >  * adapter
 >    * in
 >      * web
->        * ㅇAccountController
+>        * ○ AccountController
 >    * out
 >      * persistence
->        * ㅇAccountPersistenceAdapter
->        * ㅇSpringDataAccountRepository
+>        * ○ AccountPersistenceAdapter
+>        * ○ SpringDataAccountRepository
 >  * domain
->    * +Account
->    * +Activity
+>    * \+ Account
+>    * \+ Activity
 >  * application
->    * ㅇSendMoneyService
+>    * ○ SendMoneyService
 >    * port
 >      * in
->        * +SendMoneyUsecase
+>        * \+ SendMoneyUsecase
 >      * out
->        * +LoadAccountPort
->        * +UpdateAccountStatePort
+>        * \+ LoadAccountPort
+>        * \+ UpdateAccountStatePort
 
-3장에 있던 패키지 구조이다. 
+3장에 있던 패키지 구조이다. 외부 접근이 필요없는 package-private은 위 트리에서 ○ 로 표시하였고, 나머지 클래스들은 +로 표시하였다.
 
 영속성 패키지 클래스들과 SendMoneyService는 외부에서 접근할 필요가 없기 때문에 package-private으로 만들 수 있다. 나머지 클래스들은 아키텍처 정의에 의해 public이어야 한다.
 
@@ -69,7 +71,7 @@ package-private은 패키지 내의 클래스가 너무 많은 경우 혼란스�
 
 ##### 1. 빌드 도구가 순환 의존성을 극도로 싫어한다.
 
-빌드 도구를 사용하면 빌드 모듈 간 순환 의존성이 없음을 확신할 수 있다.
+* 빌드 도구를 사용하면 빌드 모듈 간 순환 의존성이 없음을 확신할 수 있다.
 
 ##### 2. 빌드 모듈 방식에서는 다른 모듈을 고려하지 않고 특정 모듈의 코드를 격리한 채로 변경할 수 있다.
 
@@ -82,3 +84,21 @@ package-private은 패키지 내의 클래스가 너무 많은 경우 혼란스�
 소프트웨어 아키텍처는 아키텍처 요소 간의 의존성을 관리하는 일이 전부다. 그렇기 때문에 아키텍처를 잘 유지하기 위해서는 의존성이 올바른 방향을 가리키고 있는지 지속적으로 확인해야 한다.
 
 새로운 코드 추가나 리팩토링 시 패키지 구조를 염두해두어야 하고, 가능한 패키지 바깥에서 접근하면 안 되는 클래스에 대한 의존성을 `package-private`을 이용해서 피해야 한다. 만약 이러한 제한자를 사용할 수 없다면 `ArchUnit`과 같은 컴파일 후 체크 도구를 사용하면 된다.
+
+
+
+## Q&A
+
+#### spring initializer에서 설정을 했는데 이렇게 안하고 커스터마이징이 가능한가?
+
+커스터마이징이라기보다는 각각의 모듈에 gradle을 달아서 사용이 가능하다?
+
+각 모듈별로 build/libs 안에 jar로 패키징된다.
+
+
+
+빌드아티펙트가 중요하긴 하지만 혼자하는 프로젝트가 아닌 팀원들과 함께하는 프로젝트의 경우 서로간의 약속이 더 중요하다. 리뷰단계에서 잘 잡는게 중요할 것 같다.
+
+
+
+https://news.hada.io/topic?id=2665
